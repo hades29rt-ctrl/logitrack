@@ -1,11 +1,28 @@
-import axios from 'axios';
+import axios from 'axios'
 
-// L'URL de votre API FastAPI que nous avons lancée tout à l'heure
 const client = axios.create({
   baseURL: 'http://localhost:8000',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+  headers: { 'Content-Type': 'application/json' }
+})
 
-export default client;
+client.interceptors.request.use(config => {
+  const token = localStorage.getItem('logitrack_token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+client.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('logitrack_user')
+      localStorage.removeItem('logitrack_token')
+      window.location.reload()
+    }
+    return Promise.reject(error)
+  }
+)
+
+export default client

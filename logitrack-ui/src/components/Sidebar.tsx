@@ -220,9 +220,15 @@ export default function Sidebar({ activePage, onNavigate, user, onLogin, onLogou
       )}
 
       <div className="px-4 py-2 border-t border-slate-700">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 mb-1">
           <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
           <span className="text-xs text-slate-500">Systeme operationnel</span>
+        </div>
+        <div className="text-xs text-slate-600 mt-1">
+          © 2026 LogiTrack Pro v2.0
+        </div>
+        <div className="text-xs text-slate-700 mt-0.5">
+          Tous droits reserves
         </div>
       </div>
 

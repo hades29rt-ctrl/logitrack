@@ -6,6 +6,7 @@ export interface User {
   nom: string
   prenom: string
   role: 'operateur' | 'superviseur' | 'admin'
+  token?: string
 }
 
 export function useAuth() {
@@ -13,18 +14,16 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const stored = localStorage.getItem('logitrack_user')
-    console.log('useAuth stored:', stored)
-    if (stored && stored !== 'null' && stored !== 'undefined') {
-      try {
+    try {
+      const stored = localStorage.getItem('logitrack_user')
+      if (stored) {
         const parsed = JSON.parse(stored)
-        console.log('useAuth parsed:', parsed)
-        if (parsed && parsed.id && parsed.login) {
+        if (parsed && parsed.id) {
           setUser(parsed)
         }
-      } catch {
-        localStorage.removeItem('logitrack_user')
       }
+    } catch {
+      localStorage.removeItem('logitrack_user')
     }
     setLoading(false)
   }, [])
@@ -32,11 +31,19 @@ export function useAuth() {
   const login = (userData: User) => {
     setUser(userData)
     localStorage.setItem('logitrack_user', JSON.stringify(userData))
+    if (userData.token) {
+      localStorage.setItem('logitrack_token', userData.token)
+    }
   }
 
   const logout = () => {
     setUser(null)
     localStorage.removeItem('logitrack_user')
+    localStorage.removeItem('logitrack_token')
+  }
+
+  const getToken = (): string | null => {
+    return localStorage.getItem('logitrack_token')
   }
 
   const isAdmin       = user?.role === 'admin'
@@ -50,12 +57,12 @@ export function useAuth() {
       'etiquettes', 'entree-stock', 'sortie-stock', 'articles', 'historique'
     ]
     if (tousPages.includes(page)) return true
-    const superviseurPages = ['fournisseurs', 'gestion-articles', 'gestion-fournisseurs']
+    const superviseurPages = ['fournisseurs', 'gestion-articles', 'gestion-fournisseurs', 'gestion-clients']
     if (superviseurPages.includes(page)) return isSuperviseur
     const adminPages = ['gestion-utilisateurs']
     if (adminPages.includes(page)) return isAdmin
     return false
   }
 
-  return { user, loading, login, logout, isAdmin, isSuperviseur, isOperateur, peutAcceder }
+  return { user, loading, login, logout, getToken, isAdmin, isSuperviseur, isOperateur, peutAcceder }
 }

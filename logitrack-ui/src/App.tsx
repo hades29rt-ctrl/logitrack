@@ -13,7 +13,7 @@ import { useAuth } from './hooks/useAuth'
 import Expedition from './pages/Expedition'
 import GestionClients from './pages/GestionClients'
 import Historique from './pages/Historique'
-
+import Etiquettes from './pages/Etiquettes'
 
 function App() {
   const { user, login, logout } = useAuth()
@@ -77,6 +77,7 @@ function App() {
       case 'expedition':           return <Expedition />
       case 'historique':           return <Historique />
       case 'gestion-clients':      return <GestionClients />
+      case 'etiquettes':           return <Etiquettes />
       default: return (
         <div className="p-6">
           <h1 className="text-xl font-medium text-slate-800 mb-2">
